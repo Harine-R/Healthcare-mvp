@@ -1,0 +1,29 @@
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f5f7fa;
+}
+
+.container{
+  padding:40px;
+}
+
+.cards{
+  display:flex;
+  gap:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:250px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.result{
+  margin-top:20px;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
