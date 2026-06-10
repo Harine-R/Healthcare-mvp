@@ -13,11 +13,15 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-header">
+      <div className="sidebar-header" style={{ flexDirection: "column", alignItems: "flex-start", height: "auto", padding: "20px 24px", gap: "8px" }}>
         <Link to="/" className="sidebar-logo">
           <FaHeartPulse />
           <span>SmartCare</span>
         </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "4px" }}>
+          <span style={{ display: "inline-block", width: "6px", height: "6px", background: "var(--color-success)", borderRadius: "50%", boxShadow: "0 0 8px var(--color-success)" }}></span>
+          <span>Core Engine Active</span>
+        </div>
       </div>
       <ul className="sidebar-menu">
         {menuItems.map((item) => {
