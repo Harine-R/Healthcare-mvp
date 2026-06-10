@@ -1,4 +1,23 @@
+def normalize(p):
+    """
+    Ensures input is always a list of medicine names.
+    Handles both:
+    - list input from frontend
+    - comma-separated string (fallback safety)
+    """
+    if isinstance(p, str):
+        return [x.strip() for x in p.split(",") if x.strip()]
+    elif isinstance(p, list):
+        return [x.strip() for x in p if isinstance(x, str) and x.strip()]
+    else:
+        return []
+
+
 def compare_treatment(p1, p2):
+
+    # Normalize inputs FIRST (MOST IMPORTANT FIX)
+    p1 = normalize(p1)
+    p2 = normalize(p2)
 
     medicine_info = {
         "Paracetamol": {
@@ -34,21 +53,19 @@ def compare_treatment(p1, p2):
         "Cetirizine": ["Loratadine"]
     }
 
-    p1 = set(p1)
-    p2 = set(p2)
+    # SAFE SET LOGIC
+    set1 = set(p1)
+    set2 = set(p2)
 
-    common = list(p1.intersection(p2))
-    only_first = list(p1 - p2)
-    only_second = list(p2 - p1)
+    common = list(set1 & set2)
+    only_first = list(set1 - set2)
+    only_second = list(set2 - set1)
 
-    similarity_score = 0
+    # SAFE similarity calculation
+    union = set1 | set2
+    similarity_score = round((len(common) / len(union)) * 100, 2) if union else 0
 
-    if len(p1.union(p2)) > 0:
-        similarity_score = round(
-            (len(common) / len(p1.union(p2))) * 100,
-            2
-        )
-
+    # classification
     if similarity_score >= 70:
         similarity_level = "High Similarity"
         treatment_consistency = "High"
@@ -65,28 +82,22 @@ def compare_treatment(p1, p2):
         risk_indicator = "High"
         conclusion = "Prescriptions differ significantly."
 
+    # medicine details
     medicine_details = []
 
     for med in only_first + only_second:
+        medicine_details.append({
+            "medicine": med,
+            "purpose": medicine_info.get(med, {}).get("purpose", "Information unavailable"),
+            "category": medicine_info.get(med, {}).get("category", "Unknown")
+        })
 
-        if med in medicine_info:
-            medicine_details.append({
-                "medicine": med,
-                "purpose": medicine_info[med]["purpose"],
-                "category": medicine_info[med]["category"]
-            })
-        else:
-            medicine_details.append({
-                "medicine": med,
-                "purpose": "Information unavailable",
-                "category": "Unknown"
-            })
-
-    alternative_suggestions = {}
-
-    for med in only_first + only_second:
-        if med in alternatives:
-            alternative_suggestions[med] = alternatives[med]
+    # alternatives
+    alternative_suggestions = {
+        med: alternatives[med]
+        for med in only_first + only_second
+        if med in alternatives
+    }
 
     patient_summary = (
         f"Both prescriptions share {len(common)} common medicine(s). "
