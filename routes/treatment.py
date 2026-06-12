@@ -1,15 +1,26 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
+from typing import List
 from services.treatment_service import compare_treatment
 
 router = APIRouter()
 
-@router.post("/compare-treatment")
-def treatment_compare(data: dict):
+# ✅ Strong validation (THIS FIXES EVERYTHING)
+class PrescriptionRequest(BaseModel):
+    prescription1: List[str]
+    prescription2: List[str]
 
-    print(type(data["prescription1"]))
-    print(data["prescription1"])
+
+@router.post("/compare-treatment")
+def treatment_compare(data: PrescriptionRequest):
+
+    print("P1 TYPE:", type(data.prescription1))
+    print("P1 VALUE:", data.prescription1)
+
+    print("P2 TYPE:", type(data.prescription2))
+    print("P2 VALUE:", data.prescription2)
 
     return compare_treatment(
-        data["prescription1"],
-        data["prescription2"]
+        data.prescription1,
+        data.prescription2
     )
